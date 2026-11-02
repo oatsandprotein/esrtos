@@ -1,0 +1,44 @@
+#include <Servo.h>
+Servo doorServo;
+const int trigPin = 9;
+const int echoPin = 8;
+const int servoPin = 6;
+long duration;
+float distance;
+void setup()
+{
+Serial.begin(9600);
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+doorServo.attach(servoPin);
+// Initially door is closed
+doorServo.write(0);
+}
+void loop()
+{
+// Send ultrasonic pulse
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+// Read echo
+duration = pulseIn(echoPin, HIGH);
+// Calculate distance in cm
+distance = duration / 58.0;
+Serial.print("Distance: ");
+Serial.print(distance);
+Serial.println(" cm");
+// Door control
+if (distance >= 0 && distance <= 10)
+{
+doorServo.write(90); // Open door
+Serial.println("Door OPEN");
+}
+else
+{
+doorServo.write(0); // Close door
+Serial.println("Door CLOSED");
+}
+delay(500);
+}
